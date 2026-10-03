@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Classification Dataset Studio - Plastic, Paper, Metal</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --plastic-color: #06b6d4;
+      --paper-color: #f59e0b;
+      --metal-color: #a855f7;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      min-height: 100vh;
+    }
+    header {
+      max-width: 1200px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-plastic { background: rgba(6, 182, 212, 0.2); color: var(--plastic-color); border: 1px solid var(--plastic-color); }
+    .badge-paper { background: rgba(245, 158, 11, 0.2); color: var(--paper-color); border: 1px solid var(--paper-color); }
+    .badge-metal { background: rgba(168, 85, 247, 0.2); color: var(--metal-color); border: 1px solid var(--metal-color); }
+
+    .nav-tabs {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      max-width: 1200px;
+      margin: 0 auto 24px auto;
+    }
+    .tab-btn {
+      background: var(--card-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    .main-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .stat-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+    .stat-lbl {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      margin: 28px 0 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .img-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+    .img-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+    }
+    .img-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      background: #090d16;
+    }
+    .img-footer {
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    /* Webcam Studio */
+    .webcam-panel {
+      display: none;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .webcam-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media(max-width: 800px) {
+      .webcam-layout { grid-template-columns: 1fr; }
+    }
+    .video-wrapper {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 4/3;
+      border: 2px solid var(--border);
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1);
+    }
+    .guide-overlay {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(4px);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .radio-group {
+      display: flex;
+      gap: 8px;
+    }
+    .radio-btn {
+      flex: 1;
+      padding: 12px 8px;
+      background: #0f172a;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .radio-btn.active {
+      border-color: var(--accent);
+      background: rgba(56, 189, 248, 0.1);
+    }
+    .btn {
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #0f172a; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #334155; color: #fff; }
+    .btn-secondary:hover { background: #475569; }
+    .captured-strip {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+    .captured-strip img {
+      width: 70px;
+      height: 70px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>Waste Classification Dataset Studio</h1>
+      <p class="subtitle">Dataset location: <code>d:\current project\task 3\mw</code> &bull; Balanced Training Dataset (Plastic, Paper, Metal)</p>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <span class="badge badge-plastic">Plastic (35)</span>
+      <span class="badge badge-paper">Paper (35)</span>
+      <span class="badge badge-metal">Metal (35)</span>
+    </div>
+  </header>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('gallery')">🖼️ View Balanced Dataset (105 Photos)</button>
+    <button class="tab-btn" onclick="switchTab('webcam')">📷 Live Webcam Capture Studio</button>
+  </div>
+
+  <div class="main-container">
+    
+    <div id="galleryView">
+      <div class="stats-bar">
+        <div class="stat-card">
+          <div>
+            <div class="stat-val" style="color: var(--plastic-color);">35</div>
+            <div class="stat-lbl">Plastic Waste (mw/plastic/)</div>
+          </div>
+          <div>🧴</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-val" style="color: var(--paper-color);">35</div>
+            <div class="stat-lbl">Paper Waste (mw/paper/)</div>
+          </div>
+          <div>📰</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-val" style="color: var(--metal-color);">35</div>
+            <div class="stat-lbl">Metal Waste (mw/metal/)</div>
+          </div>
+          <div>🥫</div>
+        </div>
+        <div class="stat-card">
+          <div>
+            <div class="stat-val" style="color: var(--accent);">105 / 105</div>
+            <div class="stat-lbl">Perfect Balanced Distribution</div>
+          </div>
+          <div>⚖️</div>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span class="badge badge-plastic">Class 1</span>
+        <span>Plastic Waste (Bottles, Covers, Containers - Angles, Distances, Backgrounds)</span>
+      </div>
+      <div class="image-grid" id="plasticGrid"></div>
+
+      <div class="section-title">
+        <span class="badge badge-paper">Class 2</span>
+        <span>Paper Waste (Sheets, Newspapers, Cardboard - Different Orientations & Positions)</span>
+      </div>
+      <div class="image-grid" id="paperGrid"></div>
+
+      <div class="section-title">
+        <span class="badge badge-metal">Class 3</span>
+        <span>Metal Waste (Tin Cans, Spoons, Metal Containers - Various Angles & Lighting)</span>
+      </div>
+      <div class="image-grid" id="metalGrid"></div>
+    </div>
+
+    <div id="webcamView" class="webcam-panel">
+      <div class="webcam-layout">
+        <div>
+          <div class="video-wrapper">
+            <video id="webcamVideo" autoplay playsinline></video>
+            <div class="guide-overlay" id="guideText">
+              💡 <b>Tip:</b> Show your plastic, paper, or metal waste from different positions.
+            </div>
+          </div>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <button class="btn btn-secondary" onclick="startWebcam()">Turn On Webcam</button>
+            <button class="btn btn-secondary" onclick="stopWebcam()">Stop Webcam</button>
+          </div>
+        </div>
+
+        <div class="controls">
+          <h3>Target Class</h3>
+          <div class="radio-group">
+            <div class="radio-btn active" id="btnClsPlastic" onclick="selectClass('plastic')">🧴 Plastic Waste</div>
+            <div class="radio-btn" id="btnClsPaper" onclick="selectClass('paper')">📰 Paper Waste</div>
+            <div class="radio-btn" id="btnClsMetal" onclick="selectClass('metal')">🥫 Metal Waste</div>
+          </div>
+
+          <div>
+            <label style="color: var(--text-muted); font-size: 0.9rem; display: block; margin-bottom: 6px;">
+              Object & Variation Checklist:
+            </label>
+            <select id="guidanceSelect" style="width: 100%; padding: 10px; background: #0f172a; color: #fff; border: 1px solid var(--border); border-radius: 8px;" onchange="updateGuidePrompt()">
+              <option>Object angle (tilted / 45°)</option>
+              <option>Distance (close-up vs far)</option>
+              <option>Position (center vs side)</option>
+              <option>Different Background</option>
+              <option>Different Orientation (vertical / flat)</option>
+            </select>
+          </div>
+
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" style="flex: 1;" onclick="captureSingle()">📸 Capture Image</button>
+            <button class="btn btn-secondary" style="flex: 1;" onclick="toggleBurst()">⚡ Hold Burst (5x)</button>
+          </div>
+
+          <div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Session Captures:</span>
+              <span id="sessionCount" style="font-weight: 700; color: var(--accent);">0 photos</span>
+            </div>
+            <div class="captured-strip" id="capturedStrip"></div>
+          </div>
+
+          <button class="btn btn-secondary" onclick="downloadAllCaptures()">💾 Download Captured Images (.jpg)</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <canvas id="hiddenCanvas" style="display: none;"></canvas>
+
+  <script>
+    function populateGrid(gridId, className, count) {
+      const grid = document.getElementById(gridId);
+      for (let i = 1; i <= count; i++) {
+        const num = String(i).padStart(2, '0');
+        const card = document.createElement('div');
+        card.className = 'img-card';
+        card.innerHTML = `
+          <img src="${className}/${className}_${num}.jpg" alt="${className}_${num}" onerror="this.src='https://placehold.co/400x300/1e293b/38bdf8?text=${className}_${num}.jpg'">
+          <div class="img-footer">
+            <span>${className}_${num}.jpg</span>
+            <span style="color: var(--accent);">#${i}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    populateGrid('plasticGrid', 'plastic', 35);
+    populateGrid('paperGrid', 'paper', 35);
+    populateGrid('metalGrid', 'metal', 35);
+
+    function switchTab(tab) {
+      const gView = document.getElementById('galleryView');
+      const wView = document.getElementById('webcamView');
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(t => t.classList.remove('active'));
+
+      if (tab === 'gallery') {
+        gView.style.display = 'block';
+        wView.style.display = 'none';
+        tabs[0].classList.add('active');
+        stopWebcam();
+      } else {
+        gView.style.display = 'none';
+        wView.style.display = 'block';
+        tabs[1].classList.add('active');
+        startWebcam();
+      }
+    }
+
+    let stream = null;
+    let currentClass = 'plastic';
+    let capturedImages = [];
+
+    async function startWebcam() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+        document.getElementById('webcamVideo').srcObject = stream;
+      } catch (err) {
+        alert('Webcam permission not granted or camera unavailable: ' + err.message);
+      }
+    }
+
+    function stopWebcam() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+    }
+
+    function selectClass(cls) {
+      currentClass = cls;
+      document.getElementById('btnClsPlastic').classList.toggle('active', cls === 'plastic');
+      document.getElementById('btnClsPaper').classList.toggle('active', cls === 'paper');
+      document.getElementById('btnClsMetal').classList.toggle('active', cls === 'metal');
+      updateGuidePrompt();
+    }
+
+    function updateGuidePrompt() {
+      const sel = document.getElementById('guidanceSelect').value;
+      document.getElementById('guideText').innerHTML = `💡 <b>Instruction:</b> Show your <b>${currentClass} waste</b> - <u>${sel}</u> to the camera.`;
+    }
+
+    function captureSingle() {
+      const video = document.getElementById('webcamVideo');
+      if (!video.videoWidth) {
+        alert('Please start webcam first!');
+        return;
+      }
+      const canvas = document.getElementById('hiddenCanvas');
+      canvas.width = 640;
+      canvas.height = 480;
+      const ctx = canvas.getContext('2d');
+      ctx.translate(canvas.width, 0);
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      capturedImages.push({ class: currentClass, dataUrl: dataUrl });
+
+      const strip = document.getElementById('capturedStrip');
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      strip.prepend(img);
+      document.getElementById('sessionCount').innerText = `${capturedImages.length} photos`;
+    }
+
+    function toggleBurst() {
+      let count = 0;
+      const interval = setInterval(() => {
+        captureSingle();
+        count++;
+        if (count >= 5) clearInterval(interval);
+      }, 300);
+    }
+
+    function downloadAllCaptures() {
+      if (capturedImages.length === 0) {
+        alert('No photos captured yet! Click "Capture Image" first.');
+        return;
+      }
+      capturedImages.forEach((item, idx) => {
+        const link = document.createElement('a');
+        link.download = `${item.class}_webcam_${idx + 1}.jpg`;
+        link.href = item.dataUrl;
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
