@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-4ade80?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 [![Framework](https://img.shields.io/badge/Framework-TensorFlow%20%2F%20Keras-ff6f00?style=for-the-badge&logo=tensorflow&logoColor=white)](https://tensorflow.org)
 [![Dataset](https://img.shields.io/badge/Dataset-105%20Samples-0284c7?style=for-the-badge&logo=databricks&logoColor=white)](#-dataset-gallery--classes)
-[![Platform](https://img.shields.io/badge/Web%20Studio-Live%20Inference-10b981?style=for-the-badge&logo=googlechrome&logoColor=white)](mw_dataset_viewer.html)
+[![Platform](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-10b981?style=for-the-badge&logo=googlechrome&logoColor=white)](https://maheswari9080.github.io/AI-ML-internship-task-3/)
 
 <br/>
 
@@ -17,7 +17,7 @@
   <b>An end-to-end Computer Vision pipeline designed to automate recyclable material classification at the source, powering next-generation eco-friendly smart bins and automated sorting facilities.</b>
 </p>
 
-[Explore Dataset](#-dataset-gallery--classes) • [Webcam Studio](#-interactive-web-studio) • [Model Inference](#-quickstart--python-inference) • [Architecture](#-smart-waste-management-architecture)
+🚀 **[Try Live Interactive Web App](https://maheswari9080.github.io/AI-ML-internship-task-3/)** • [Explore Dataset](#-dataset-gallery--classes) • [Webcam Studio](#-interactive-web-studio) • [Model Inference](#-quickstart--python-inference) • [Architecture](#-smart-waste-management-architecture)
 
 </div>
 

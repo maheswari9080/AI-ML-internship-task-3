@@ -39,8 +39,9 @@ Designed a full architecture pipeline for smart recycling bins, automated convey
 💡 **Takeaway**:
 This task demonstrated how critical data quality, diverse angles, and lighting considerations are in deploying practical Computer Vision models that perform reliably outside controlled environments.
 
-Check out the full open-source code, dataset, and live viewer on GitHub:
-👉 **https://github.com/maheswari9080/AI-ML-internship-task-3**
+Check out the live interactive web demo and full open-source repository:
+🌐 **Live Interactive App**: https://maheswari9080.github.io/AI-ML-internship-task-3/
+💻 **GitHub Repository**: https://github.com/maheswari9080/AI-ML-internship-task-3
 
 Feedback and suggestions are always welcome! 👇
 
